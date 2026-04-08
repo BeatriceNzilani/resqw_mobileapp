@@ -3,7 +3,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(String) onViewChange;
-
   const RegisterScreen({super.key, required this.onViewChange});
 
   @override
@@ -15,20 +14,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
 
   Future<void> _signUp() async {
-    if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Passwords do not match")),
-      );
-      return;
-    }
-
     setState(() => _isLoading = true);
     try {
-      await Supabase.instance.client.auth.signUp(
+      // We use email as the primary identifier. 
+      // Phone is passed inside 'data' so it's stored in user_metadata.
+      final response = await Supabase.instance.client.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         data: {
@@ -36,16 +29,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'phone': _phoneController.text.trim(),
         },
       );
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Registration Successful! Check your email.")),
-        );
-        widget.onViewChange('login');
+
+      if (response.user != null) {
+        widget.onViewChange('profile');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
+        SnackBar(
+          content: Text("Error: $e"),
+          backgroundColor: Colors.redAccent,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -54,51 +47,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( // Fixes the "No Material widget found" error
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FD),
       body: SingleChildScrollView(
         child: Column(
           children: [
             _buildHeader(),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Transform.translate(
-                offset: const Offset(0, -30),
-                child: Container(
-                  padding: const EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20)],
-                  ),
-                  child: Column(
-                    children: [
-                      _buildField(_nameController, "Full Name", Icons.person_outline),
-                      const SizedBox(height: 15),
-                      _buildField(_emailController, "Email", Icons.email_outlined),
-                      const SizedBox(height: 15),
-                      _buildField(_phoneController, "Phone Number", Icons.phone_android_outlined),
-                      const SizedBox(height: 15),
-                      _buildField(_passwordController, "Password", Icons.lock_outline, isPass: true),
-                      const SizedBox(height: 15),
-                      _buildField(_confirmPasswordController, "Confirm Password", Icons.lock_reset, isPass: true),
-                      const SizedBox(height: 25),
-                      _isLoading 
-                        ? const CircularProgressIndicator()
+              child: Container(
+                padding: const EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Create Account",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF4A4A4A),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+
+                    _buildField(_nameController, "Full Name", Icons.person_outline),
+                    const SizedBox(height: 15),
+                    _buildField(_emailController, "Email", Icons.email_outlined),
+                    const SizedBox(height: 15),
+                    _buildField(_phoneController, "Phone Number", Icons.phone_android_outlined),
+                    const SizedBox(height: 15),
+                    _buildField(_passwordController, "Password", Icons.lock_outline, isPass: true),
+
+                    const SizedBox(height: 30),
+
+                    _isLoading
+                        ? const CircularProgressIndicator(color: Color(0xFF9161F2))
                         : ElevatedButton(
                             onPressed: _signUp,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF9161F2),
-                              minimumSize: const Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              minimumSize: const Size(double.infinity, 55),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                             ),
-                            child: const Text("REGISTER", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "CREATE ACCOUNT",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                      TextButton(
-                        onPressed: () => widget.onViewChange('login'),
-                        child: const Text("Already have an account? Login"),
+
+                    const SizedBox(height: 20),
+
+                    GestureDetector(
+                      onTap: () => widget.onViewChange('login'),
+                      child: RichText(
+                        text: const TextSpan(
+                          text: "Already have an account? ",
+                          style: TextStyle(color: Colors.black54),
+                          children: [
+                            const TextSpan(
+                              text: "Login",
+                              style: TextStyle(
+                                color: Color(0xFF9161F2),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -111,15 +144,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 60, bottom: 60),
+      padding: const EdgeInsets.symmetric(vertical: 60),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFF8E54E9), Color(0xFF4776E6)]),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+        gradient: LinearGradient(
+          colors: [Color(0xFF8E54E9), Color(0xFF4776E6)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(35),
+          bottomRight: Radius.circular(35),
+        ),
       ),
       child: const Column(
         children: [
-          Text("ResQW", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text("Safety within reach", style: TextStyle(color: Colors.white70)),
+          Text(
+            "ResQW",
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Safety within reach",
+            style: TextStyle(color: Colors.white70),
+          ),
         ],
       ),
     );
@@ -134,7 +182,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         prefixIcon: Icon(icon, color: const Color(0xFF9161F2)),
         filled: true,
         fillColor: const Color(0xFFF5F7FA),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }

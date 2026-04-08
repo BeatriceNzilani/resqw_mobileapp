@@ -5,12 +5,10 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Uses your custom services/supabase_config.dart
   await SupabaseConfig.init();
-
   runApp(const ResQWApp());
 }
 
@@ -43,7 +41,6 @@ class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
   String _currentProfileView = 'profile'; 
 
-  // The missing function your IDE was asking for
   void _handleViewChange(String newView) {
     setState(() {
       _currentProfileView = newView;
@@ -54,7 +51,6 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     Widget profileSlot;
 
-    // Logic to toggle between Profile, Login, and Register within the same tab
     if (_currentProfileView == 'login') {
       profileSlot = LoginScreen(onViewChange: _handleViewChange);
     } else if (_currentProfileView == 'register') {
@@ -70,6 +66,7 @@ class _MainNavigationState extends State<MainNavigation> {
     ];
 
     return Scaffold(
+      // The IndexedStack ensures the footer stays at the bottom
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
@@ -79,7 +76,6 @@ class _MainNavigationState extends State<MainNavigation> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
-            // Always reset to main profile view when clicking the profile tab
             if (index == 2) _currentProfileView = 'profile';
           });
         },

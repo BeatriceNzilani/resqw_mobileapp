@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'gbv_selection_screen.dart';
+import 'resources_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -23,16 +25,21 @@ class HomeScreen extends StatelessWidget {
                     onTap: () => print("Navigate to Hospitals"),
                   ),
                   const SizedBox(height: 15),
+                  
                   _buildActionCard(
                     title: "Report GBV",
                     subtitle: "File a report for yourself or others",
                     icon: Icons.description,
                     color: Colors.orange,
                     onTap: () {
-                      print("Navigate to GBV Reporting Selection");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const GBVReportingSelection()),
+                      );
                     },
                   ),
                   const SizedBox(height: 15),
+                  
                   _buildActionCard(
                     title: "Police Stations",
                     subtitle: "Locate help on the map",
@@ -41,14 +48,22 @@ class HomeScreen extends StatelessWidget {
                     onTap: () => print("Navigate to Police"),
                   ),
                   const SizedBox(height: 15),
+                  
                   _buildActionCard(
                     title: "Resources",
-                    subtitle: "Educational safety materials",
+                    subtitle: "Immediate safety protocols",
                     icon: Icons.menu_book,
                     color: Colors.blueGrey,
-                    onTap: () => print("Navigate to Resources"),
+                    onTap: () {
+                      // Keeps the footer visible by pushing onto the current navigator stack
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ResourcesScreen()),
+                      );
+                    },
                   ),
                   const SizedBox(height: 30),
+                  
                   _buildInfoBox(),
                 ],
               ),
@@ -56,13 +71,10 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      // MOVED TO THE RIGHT
       floatingActionButton: _buildSOSButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
-
-  // --- UI COMPONENTS ---
 
   Widget _buildGradientHeader() {
     return Container(
@@ -72,7 +84,6 @@ class HomeScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          // UPDATED PURPLE SHADES
           colors: [Color(0xFF9161F2), Color(0xFF5B4BDB)],
         ),
         borderRadius: BorderRadius.only(
@@ -112,7 +123,7 @@ class HomeScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 15, offset: const Offset(0, 6)),
           ],
         ),
         child: Row(
@@ -130,6 +141,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
                   Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.black54)),
                 ],
               ),
@@ -168,27 +180,20 @@ class HomeScreen extends StatelessWidget {
     return GestureDetector(
       onLongPress: () => print("EMERGENCY TRIGGERED"),
       child: Container(
-        height: 75, // Slightly smaller to fit better on the right
+        height: 75,
         width: 75,
         decoration: BoxDecoration(
           color: Colors.red.shade700,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(
-              color: Colors.red.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
+            BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
           ],
         ),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.warning_amber_rounded, color: Colors.white, size: 30),
-            Text(
-              "SOS",
-              style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-            ),
+            Text("SOS", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
