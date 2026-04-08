@@ -9,120 +9,188 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F7FA),
       body: Column(
         children: [
-          // GRADIENT HEADER
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 40),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF8E54E9), Color(0xFF4776E6)],
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(35),
-                bottomRight: Radius.circular(35),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("ResQW", 
-                  style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text("Your Safety, Our Priority", 
-                  style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16)),
-              ],
-            ),
-          ),
-
-          // STATIC ACTION CARDS
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              children: [
-                _buildActionCard("Hospitals", "Find nearby hospitals", const Color(0xFF00A676), Icons.medical_services),
-                const SizedBox(height: 12),
-                _buildActionCard("Report GBV", "File a report anonymously", const Color(0xFFE53935), Icons.description),
-                const SizedBox(height: 12),
-                _buildActionCard("Police Stations", "Locate help on the map", const Color(0xFF1E88E5), Icons.shield),
-                const SizedBox(height: 12),
-                _buildActionCard("Resources", "Educational materials", const Color(0xFFFB8C00), Icons.school),
-                
-                const SizedBox(height: 20),
-                
-                // EMERGENCY INFO BOX
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+          _buildGradientHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              child: Column(
+                children: [
+                  _buildActionCard(
+                    title: "Hospitals",
+                    subtitle: "Find nearby medical assistance",
+                    icon: Icons.local_hospital,
+                    color: Colors.green,
+                    onTap: () => print("Navigate to Hospitals"),
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Color(0xFF1E88E5), size: 20),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          "Immediate danger? Long-press the SOS button below.", 
-                          style: TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.w500)
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 15),
+                  _buildActionCard(
+                    title: "Report GBV",
+                    subtitle: "File a report for yourself or others",
+                    icon: Icons.description,
+                    color: Colors.orange,
+                    onTap: () {
+                      print("Navigate to GBV Reporting Selection");
+                    },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 15),
+                  _buildActionCard(
+                    title: "Police Stations",
+                    subtitle: "Locate help on the map",
+                    icon: Icons.local_police,
+                    color: Colors.blue,
+                    onTap: () => print("Navigate to Police"),
+                  ),
+                  const SizedBox(height: 15),
+                  _buildActionCard(
+                    title: "Resources",
+                    subtitle: "Educational safety materials",
+                    icon: Icons.menu_book,
+                    color: Colors.blueGrey,
+                    onTap: () => print("Navigate to Resources"),
+                  ),
+                  const SizedBox(height: 30),
+                  _buildInfoBox(),
+                ],
+              ),
             ),
           ),
         ],
       ),
-
-      floatingActionButton: FloatingActionButton.large(
-        onPressed: () {
-          // Trigger Emergency Logic here
-        },
-        backgroundColor: Colors.red.shade700,
-        elevation: 8,
-        shape: const CircleBorder(),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.white, size: 32),
-            Text("SOS", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-      // bottomNavigationBar has been removed to avoid duplication with main.dart
+      // MOVED TO THE RIGHT
+      floatingActionButton: _buildSOSButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  Widget _buildActionCard(String title, String sub, Color color, IconData icon) {
+  // --- UI COMPONENTS ---
+
+  Widget _buildGradientHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 70, left: 25, right: 25, bottom: 45),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          // UPDATED PURPLE SHADES
+          colors: [Color(0xFF9161F2), Color(0xFF5B4BDB)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "ResQW",
+            style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Your Safety, Our Priority",
+            style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 16, letterSpacing: 0.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 6,
+              height: 45,
+              decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+            ),
+            const SizedBox(width: 15),
+            Icon(icon, color: color, size: 30),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black26),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoBox() {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
+        color: const Color(0xFF5B4BDB).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFF5B4BDB).withOpacity(0.1)),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: Colors.white, size: 26),
-          ),
-          const SizedBox(width: 15),
+          Icon(Icons.info_outline, color: Color(0xFF5B4BDB), size: 22),
+          SizedBox(width: 15),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
-                Text(sub, style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 11)),
-              ],
+            child: Text(
+              "In immediate danger? Long-press the SOS button to alert emergency contacts.",
+              style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSOSButton() {
+    return GestureDetector(
+      onLongPress: () => print("EMERGENCY TRIGGERED"),
+      child: Container(
+        height: 75, // Slightly smaller to fit better on the right
+        width: 75,
+        decoration: BoxDecoration(
+          color: Colors.red.shade700,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.red.withOpacity(0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.white, size: 30),
+            Text(
+              "SOS",
+              style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
