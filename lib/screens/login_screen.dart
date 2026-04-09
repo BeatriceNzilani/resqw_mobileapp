@@ -18,14 +18,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
+    
     try {
       await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      // Success: Tell the parent shell to switch to the profile dashboard
       widget.onViewChange('profile');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Login Failed: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login Failed: ${e.toString()}"), backgroundColor: Colors.redAccent)
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -39,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             _buildHeader(),
-            const SizedBox(height: 20), // Adds space to prevent overlap
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Container(
@@ -60,8 +64,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       const Text("Welcome Back", 
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF4A4A4A))),
-                      const SizedBox(height: 25),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF4A4A4A))),
+                      const SizedBox(height: 10),
+                      const Text("Log in to access your safety dashboard", 
+                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                      const SizedBox(height: 30),
                       _buildTextField(_emailController, "Email", Icons.email_outlined),
                       const SizedBox(height: 15),
                       _buildTextField(_passwordController, "Password", Icons.lock_outline, isPass: true),
@@ -74,32 +81,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 backgroundColor: const Color(0xFF9161F2),
                                 minimumSize: const Size(double.infinity, 55),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                elevation: 0,
                               ),
-                              child: const Text("LOGIN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              child: const Text("LOGIN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                             ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () => widget.onViewChange('register'),
+                      const SizedBox(height: 25),
+                      GestureDetector(
+                        onTap: () => widget.onViewChange('register'),
                         child: RichText(
-  text: TextSpan(
-    children: [
-      TextSpan(
-        text: "Don't have an account? ",
-        style: TextStyle(
-          color: Colors.black54,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      TextSpan(
-        text: "Create Account",
-        style: TextStyle(
-          color: Color(0xFF9161F2),
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ],
-  ),
-),
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(text: "Don't have an account? ", style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w500)),
+                              TextSpan(text: "Create Account", style: TextStyle(color: Color(0xFF9161F2), fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -116,12 +112,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       controller: ctrl,
       obscureText: isPass,
+      validator: (value) => value == null || value.isEmpty ? "Field required" : null,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF9161F2)),
+        prefixIcon: Icon(icon, color: const Color(0xFF9161F2), size: 22),
         filled: true,
         fillColor: const Color(0xFFF5F7FA),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18),
       ),
     );
   }
@@ -131,11 +129,20 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       padding: const EdgeInsets.only(top: 80, bottom: 60),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFF8E54E9), Color(0xFF4776E6)]),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF9161F2), Color(0xFF5B4BDB)],
+        ),
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
       ),
       child: const Center(
-        child: Text("ResQW", style: TextStyle(fontSize: 42, fontWeight: FontWeight.bold, color: Colors.white)),
+        child: Column(
+          children: [
+            Text("ResQW", style: TextStyle(fontSize: 42, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: -1)),
+            Text("Your personal safety companion", style: TextStyle(color: Colors.white70, fontSize: 14)),
+          ],
+        ),
       ),
     );
   }

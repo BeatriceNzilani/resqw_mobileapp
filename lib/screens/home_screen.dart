@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'gbv_selection_screen.dart';
-import 'resources_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final Function(String) onNavigate; // Callback to switch views in the main shell
+
+  const HomeScreen({super.key, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +31,7 @@ class HomeScreen extends StatelessWidget {
                     subtitle: "File a report for yourself or others",
                     icon: Icons.description,
                     color: Colors.orange,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const GBVReportingSelection()),
-                      );
-                    },
+                    onTap: () => onNavigate('gbv'), // Switches to GBV view in main.dart
                   ),
                   const SizedBox(height: 15),
                   
@@ -54,13 +49,7 @@ class HomeScreen extends StatelessWidget {
                     subtitle: "Immediate safety protocols",
                     icon: Icons.menu_book,
                     color: Colors.blueGrey,
-                    onTap: () {
-                      // Keeps the footer visible by pushing onto the current navigator stack
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ResourcesScreen()),
-                      );
-                    },
+                    onTap: () => onNavigate('resources'), // Switches to Resources view
                   ),
                   const SizedBox(height: 30),
                   
@@ -75,6 +64,8 @@ class HomeScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+
+  // --- UI Components ---
 
   Widget _buildGradientHeader() {
     return Container(
@@ -96,12 +87,21 @@ class HomeScreen extends StatelessWidget {
         children: [
           const Text(
             "ResQW",
-            style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+              fontSize: 38, 
+              fontWeight: FontWeight.bold, 
+              color: Colors.white,
+              letterSpacing: -1,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             "Your Safety, Our Priority",
-            style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 16, letterSpacing: 0.5),
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.85), 
+              fontSize: 16, 
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
@@ -123,7 +123,11 @@ class HomeScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 15, offset: const Offset(0, 6)),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06), 
+              blurRadius: 15, 
+              offset: const Offset(0, 6),
+            ),
           ],
         ),
         child: Row(
@@ -131,7 +135,10 @@ class HomeScreen extends StatelessWidget {
             Container(
               width: 6,
               height: 45,
-              decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(
+                color: color, 
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             const SizedBox(width: 15),
             Icon(icon, color: color, size: 30),
@@ -140,9 +147,15 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  Text(
+                    title, 
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                  Text(
+                    subtitle, 
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
                 ],
               ),
             ),
@@ -186,14 +199,25 @@ class HomeScreen extends StatelessWidget {
           color: Colors.red.shade700,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+            BoxShadow(
+              color: Colors.red.withOpacity(0.3), 
+              blurRadius: 20, 
+              offset: const Offset(0, 10),
+            ),
           ],
         ),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.warning_amber_rounded, color: Colors.white, size: 30),
-            Text("SOS", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            Text(
+              "SOS", 
+              style: TextStyle(
+                color: Colors.white, 
+                fontSize: 11, 
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),

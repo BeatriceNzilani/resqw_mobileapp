@@ -3,7 +3,11 @@ import 'self_report_form.dart';
 import 'third_party_report_form.dart';
 
 class GBVReportingSelection extends StatelessWidget {
-  const GBVReportingSelection({super.key});
+  // 1. Define the onBack callback
+  final VoidCallback? onBack;
+
+  // 2. Add it to the constructor
+  const GBVReportingSelection({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +15,8 @@ class GBVReportingSelection extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F7FA),
       body: Column(
         children: [
-          _buildHeader("Report Incident", "Choose how you want to report"),
+          // 3. Pass context to the header
+          _buildHeader(context, "Report Incident", "Choose how you want to report"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -41,7 +46,8 @@ class GBVReportingSelection extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(String title, String sub) {
+  // 4. Update the header to handle the back logic
+  Widget _buildHeader(BuildContext context, String title, String sub) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(top: 60, left: 25, right: 25, bottom: 35),
@@ -56,7 +62,13 @@ class GBVReportingSelection extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => print("Back"),
+            onPressed: () {
+              if (onBack != null) {
+                onBack!(); // Calls the function in main.dart to switch views
+              } else {
+                Navigator.pop(context);
+              }
+            },
           ),
           Text(title, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
           Text(sub, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14)),
