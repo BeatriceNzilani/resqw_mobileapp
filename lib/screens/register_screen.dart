@@ -28,11 +28,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         data: {
           'full_name': _nameController.text.trim(),
           'phone': _phoneController.text.trim(),
+          'role': 'victim', // <--- Hardcoded: Everyone here is a victim
         },
       );
 
       if (response.user != null) {
-        widget.onViewChange('profile');
+        // Move to the next mobile screen (usually profile or home)
+        widget.onViewChange('profile'); 
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,6 +70,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       const Text("Join ResQW", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF4A4A4A))),
+                      const SizedBox(height: 10),
+                      const Text("Create your emergency profile", style: TextStyle(color: Colors.black54)),
                       const SizedBox(height: 25),
                       _buildField(_nameController, "Full Name", Icons.person_outline),
                       const SizedBox(height: 15),
@@ -112,6 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  // ... _buildHeader and _buildField remain the same as your original code
   Widget _buildHeader() {
     return Container(
       width: double.infinity,

@@ -26,6 +26,7 @@ dependencies:
   
   # --- UTILS ---
   uuid: ^4.3.3
+  google_maps_flutter: ^2.17.0
 
 dev_dependencies:
   flutter_test:
