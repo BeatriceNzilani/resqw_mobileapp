@@ -3,106 +3,235 @@ import 'self_report_form.dart';
 import 'third_party_report_form.dart';
 
 class GBVReportingSelection extends StatelessWidget {
-  // 1. Define the onBack callback
   final VoidCallback? onBack;
 
-  // 2. Add it to the constructor
   const GBVReportingSelection({super.key, this.onBack});
+
+  static const Color primaryPurple = Color.fromARGB(255, 115, 53, 191);
+  static const Color accentPurple = Color(0xFF7B1FA2);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      body: Column(
-        children: [
-          // 3. Pass context to the header
-          _buildHeader(context, "Report Incident", "Choose how you want to report"),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+      backgroundColor: const Color(0xFFF8F9FE),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            _buildModernHeader(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _selectionCard(
-                    context,
-                    "Report for Self",
-                    "I am the victim and need assistance",
-                    Icons.person,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SelfReportForm())),
+                  _buildSectionLabel("Choose Report Type"),
+                  const SizedBox(height: 12),
+                  _buildActionCard(
+                    title: "Report for Myself",
+                    subtitle: "Safe and private reporting for you",
+                    icon: Icons.person_rounded,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SelfReportForm()),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  _selectionCard(
-                    context,
-                    "Report for Others",
-                    "Reporting on behalf of someone else",
-                    Icons.people_alt_outlined,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ThirdPartyReportForm())),
+                  const SizedBox(height: 12),
+                  _buildActionCard(
+                    title: "Report for Others",
+                    subtitle: "Help a friend or family member",
+                    icon: Icons.people_rounded,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ThirdPartyReportForm()),
+                    ),
                   ),
+                  const SizedBox(height: 28),
+                  _buildAwarenessCard(),
+                  const SizedBox(height: 28),
+                  _buildFriendlySafetyBox(),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // 4. Update the header to handle the back logic
-  Widget _buildHeader(BuildContext context, String title, String sub) {
+  Widget _buildSectionLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+        color: Colors.black45,
+        letterSpacing: 0.8,
+      ),
+    );
+  }
+
+  Widget _buildModernHeader(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 60, left: 25, right: 25, bottom: 35),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF9161F2), Color(0xFF5B4BDB)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [primaryPurple, accentPurple],
         ),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              if (onBack != null) {
-                onBack!(); // Calls the function in main.dart to switch views
-              } else {
-                Navigator.pop(context);
-              }
-            },
-          ),
-          Text(title, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
-          Text(sub, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14)),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(25, 70, 25, 45),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Report GBV",
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: -1,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "We are here to help you stay safe.",
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.85),
+                fontSize: 16,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _selectionCard(BuildContext context, String title, String sub, IconData icon, VoidCallback onTap) {
+  Widget _buildActionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 5))],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF9161F2), size: 35),
-            const SizedBox(width: 20),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: primaryPurple.withOpacity(0.10),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: primaryPurple, size: 30),
+            ),
+            const SizedBox(width: 15),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
-                  Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                  Text(title,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: const TextStyle(fontSize: 13, color: Colors.black54)),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black26),
+            const Icon(Icons.arrow_forward_ios_rounded,
+                size: 14, color: Colors.black26),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAwarenessCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            primaryPurple.withOpacity(0.08),
+            accentPurple.withOpacity(0.04)
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: primaryPurple.withOpacity(0.12)),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "You are not alone",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: primaryPurple,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Don't be afraid to speak up. Reporting is the first and most courageous step you can take toward your safety and justice. We are here to support you every step of the way.",
+            style: TextStyle(height: 1.5, fontSize: 14),
+          ),
+          SizedBox(height: 12),
+          Text(
+            "Once you submit a report, our dedicated responders will review your details securely and reach out to provide the guidance and support you need.",
+            style: TextStyle(height: 1.5, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFriendlySafetyBox() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 70, 16, 137).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.verified_user_rounded, color: primaryPurple),
+          SizedBox(width: 15),
+          Expanded(
+            child: Text(
+              "All reports are secure. Your identity remains private.",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'gbv_selection_screen.dart'; // Ensure this matches your filename
 
 class HomeScreen extends StatefulWidget {
-  final Function(String) onNavigate;
-
-  const HomeScreen({super.key, required this.onNavigate});
+  const HomeScreen({super.key}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -42,7 +41,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         backgroundColor: const Color(0xFFF8F9FE),
         body: Column(
           children: [
-            _buildModernHeader(),
+            // HERO ADDED HERE: This tag must match the one in GBVSelectionScreen
+            Hero(
+              tag: 'header_main',
+              child: _buildModernHeader(),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
@@ -60,7 +63,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       title: "Report Incident",
                       subtitle: "Secure & confidential reporting",
                       icon: Icons.shield_moon_rounded,
-                      onTap: () => widget.onNavigate('gbv'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GBVReportingSelection(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 15),
                     _buildActionCard(
@@ -74,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       title: "Knowledge Hub",
                       subtitle: "Safety protocols & legal rights",
                       icon: Icons.menu_book_rounded,
-                      onTap: () => widget.onNavigate('resources'),
+                      onTap: () => print("Knowledge Hub"),
                     ),
                     const SizedBox(height: 30),
                     _buildSafetyStatusBox(),
@@ -85,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           ],
         ),
-        // Returned to the right (endFloat) and moved down slightly
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 10.0, right: 10.0), 
           child: _buildPulseSOSButton(),
@@ -96,43 +105,46 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildModernHeader() {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [primaryPurple, accentPurple],
+    return Material(
+      type: MaterialType.transparency, // Important for Hero text scaling
+      child: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [primaryPurple, accentPurple],
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(40),
+            bottomRight: Radius.circular(40),
+          ),
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(25, 70, 25, 45),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "ResQW",
-              style: TextStyle(
-                fontSize: 38,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: -1,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(25, 70, 25, 45),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "ResQW",
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Your Safety, Our Priority",
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.85),
-                fontSize: 16,
-                letterSpacing: 0.5,
+              const SizedBox(height: 4),
+              Text(
+                "Your Safety, Our Priority",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.85),
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -196,7 +208,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           SizedBox(width: 15),
           Expanded(
             child: Text(
-              // Updated to say "danger" instead of emergency
               "In danger? Long press the SOS button for help.",
               style: TextStyle(
                 color: Color.fromARGB(221, 0, 0, 0),
@@ -258,7 +269,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Danger icon
                       Icon(Icons.report_problem_rounded, color: Colors.white, size: 34),
                       SizedBox(height: 2),
                       Text(

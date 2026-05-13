@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Added for Immersive Mode
+import 'package:flutter/services.dart'; 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'services/supabase_config.dart';
@@ -7,8 +7,7 @@ import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/gbv_selection_screen.dart'; 
-import 'screens/resources_screen.dart';
+// Note: Imports for GBV and Resources are now mainly used inside home_screen.dart
 
 // Responder Imports
 import 'screens/responders/responder_dashboard.dart'; 
@@ -19,8 +18,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SupabaseConfig.init();
 
-  // --- ENABLE IMMERSIVE MODE ---
-  // This hides the time/battery. It reappears when the user swipes.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
   runApp(const ResQWApp());
@@ -93,24 +90,14 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
   String _currentProfileView = 'profile'; 
-  String _currentHomeView = 'main'; 
 
   void _handleProfileViewChange(String newView) => setState(() => _currentProfileView = newView);
-  void _handleHomeViewChange(String newView) => setState(() => _currentHomeView = newView);
 
   @override
   Widget build(BuildContext context) {
-    Widget homeSlot;
-    switch (_currentHomeView) {
-      case 'gbv':
-        homeSlot = GBVReportingSelection(onBack: () => _handleHomeViewChange('main'));
-        break;
-      case 'resources':
-        homeSlot = ResourcesScreen(onBack: () => _handleHomeViewChange('main'));
-        break;
-      default:
-        homeSlot = HomeScreen(onNavigate: _handleHomeViewChange);
-    }
+    // CORRECTION: homeSlot is now always HomeScreen. 
+    // Navigation to 'gbv' or 'resources' happens via Navigator.push inside HomeScreen.
+    Widget homeSlot = const HomeScreen();
 
     Widget profileSlot;
     if (_currentProfileView == 'login') {
@@ -137,7 +124,7 @@ class _MainNavigationState extends State<MainNavigation> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
-            if (index == 0) _currentHomeView = 'main';
+            // Reset profile view when clicking the profile tab
             if (index == 2) _currentProfileView = 'profile';
           });
         },
